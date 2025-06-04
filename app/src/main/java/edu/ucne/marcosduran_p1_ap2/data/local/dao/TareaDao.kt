@@ -23,7 +23,7 @@ interface TareaDao {
     suspend fun find (id: Int): TareaEntity?
 
     @Delete
-    suspend fun  delete ()
+    suspend fun  delete(tarea: TareaEntity)
     @Query("SELECT * FROM tarea")
 
     fun getAll(): Flow<List<TareaEntity>>

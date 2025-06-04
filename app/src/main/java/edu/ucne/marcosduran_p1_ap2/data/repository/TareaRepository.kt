@@ -7,11 +7,11 @@ import javax.inject.Inject
 class TareaRepository @Inject constructor(
     private val tareaDao: TareaDao
 ) {
-    suspend fun save(tarea: TareaEntity) = TareaDao.save(tarea)
+    suspend fun save(tarea: TareaEntity) = tareaDao.save(tarea)
 
-    suspend fun getTarea(id: Int) = TareaDao.find(id)
+    suspend fun getTarea(id: Int) = tareaDao.find(id)
 
-    suspend fun delete(tarea: TareaEntity) = TareaDao.delete(tarea)
+    suspend fun delete(tarea: TareaEntity) = tareaDao.delete(tarea)
 
-    fun getTarea() = TareaDao.getAll()
+    fun getTarea() = tareaDao.getAll()
 }
