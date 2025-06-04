@@ -5,7 +5,7 @@ import edu.ucne.marcosduran_p1_ap2.data.local.entities.TareaEntity
 import javax.inject.Inject
 
 class TareaRepository @Inject constructor(
-    private val tareaDouble: Double
+    private val tareaDao: TareaDao
 ) {
     suspend fun save(tarea: TareaEntity) = TareaDao.save(tarea)
 
