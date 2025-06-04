@@ -8,9 +8,9 @@ import edu.ucne.marcosduran_p1_ap2.data.local.entities.TareaEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface SystemDao {
+interface TareaDao {
     @Upsert()
-    suspend fun save(system: TareaEntity)
+    suspend fun save(tarea: TareaEntity)
     @Query(
         """
             SELECT *
