@@ -13,5 +13,5 @@ import edu.ucne.marcosduran_p1_ap2.data.local.entities.TareaEntity
     exportSchema = false
 )
 abstract class TareaDb : RoomDatabase() {
-    abstract fun tareaDao(): TareaDao
+    abstract fun TareaDao(): TareaDao
 }
