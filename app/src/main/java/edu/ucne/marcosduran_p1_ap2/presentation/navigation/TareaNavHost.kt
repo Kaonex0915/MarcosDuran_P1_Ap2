@@ -14,12 +14,12 @@ fun SystemNavHost(
         startDestination = Screen.SystemList
     ) {
         composable<Screen.SystemList> {
-            SystemListScreen (
-                goToSystem = {
-                    navHostController.navigate(Screen.System(it))
+            TareaListScreen (
+                goToTarea = {
+                    navHostController.navigate(Screen.tarea(it))
                 },
-                createSystem = {
-                    navHostController.navigate(Screen.System(0))
+                createTarea = {
+                    navHostController.navigate(Screen.tarea(0))
                 }
             )
         }
