@@ -12,9 +12,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-
 @HiltViewModel
-class SystemViewModel @Inject constructor(
+class TareaViewModel @Inject constructor(
     private val tareaRepository: TareaRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(TareaUiState())
@@ -44,7 +43,7 @@ class SystemViewModel @Inject constructor(
             }
 
             try {
-                TareaRepository.save(_uiState.value.toEntity())
+                tareaRepository.save(_uiState.value.toEntity())
 
                 _uiState.update {
                     it.copy(errorMessage = null)
@@ -69,11 +68,11 @@ class SystemViewModel @Inject constructor(
         }
     }
 
-    fun selectedTara(tareaId: Int){
+    fun selectedTarea(tareaId: Int){
         viewModelScope.launch {
             if(tareaId > 0){
                 try {
-                    val tarea = TareaRepository.getTarea(tareaId)
+                    val tarea = tareaRepository.getTarea(tareaId)
                     _uiState.update {
                         it.copy(
                             tareaId = tarea?.tareaId,
@@ -94,7 +93,7 @@ class SystemViewModel @Inject constructor(
     private fun delete() {
         viewModelScope.launch {
             try {
-                TareaRepository.delete(_uiState.value.toEntity())
+                tareaRepository.delete(_uiState.value.toEntity())
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(errorMessage = "Error al eliminar: ${e.message}")
@@ -105,7 +104,7 @@ class SystemViewModel @Inject constructor(
 
     private fun getTareas() {
         viewModelScope.launch {
-            TareaRepository.getTareas().collect { tareas ->
+            tareaRepository.getTareas().collect { tareas ->
                 _uiState.update {
                     it.copy(tareas = tareas)
                 }
@@ -121,7 +120,7 @@ class SystemViewModel @Inject constructor(
             )
         }
     }
-    private fun onTiempoChange(tiempo: Int) {
+    private fun onTiempoChange(tiempo: Long) {
         _uiState.update {
             it.copy(
                 tiempo = tiempo,

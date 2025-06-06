@@ -9,5 +9,5 @@ data class TareaEntity(
     @PrimaryKey
     val tareaId: Int? = null,
     val descripcion: String = "",
-    val tiempo: Int = 0
+    val tiempo: Long? = null
 )

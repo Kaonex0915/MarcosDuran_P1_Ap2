@@ -9,7 +9,7 @@ import edu.ucne.marcosduran_p1_ap2.data.local.entities.TareaEntity
     entities = [
         TareaEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class TareaDb : RoomDatabase() {
