@@ -26,7 +26,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -35,6 +39,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import edu.ucne.marcosduran_p1_ap2.data.local.entities.TareaEntity
 import edu.ucne.marcosduran_p1_ap2.presentation.tarea.TareaUiState
 import edu.ucne.marcosduran_p1_ap2.presentation.tarea.TareaViewModel
+import kotlinx.coroutines.delay
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 @Composable
 fun TareaListScreen(
@@ -64,7 +72,7 @@ fun TareaListBodyScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Lista de tareasa",
+                        text = "Lista de tareas",
                         style = MaterialTheme.typography.headlineSmall
                     )
                 }
@@ -103,6 +111,8 @@ fun SystemRow(
     goToTarea: (Int) -> Unit,
     createTarea: () -> Unit
 ){
+    val dateFormatter = SimpleDateFormat("dd/mm/yyyy", Locale.getDefault())
+
     Card(
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
@@ -128,17 +138,39 @@ fun SystemRow(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "Descripcion: ${it.descripcion}",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary
+                text = "Asignacion: ${it.descripcion}",
+                style = MaterialTheme.typography.titleMedium
             )
-            Text(
-                text = "Tiempo: ${it.tiempo}",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary
-            )
+            CountDownTimer(deadlineMillis = it.tiempo!!.toLong())
         }
     }
 
     HorizontalDivider()
+}
+
+@Composable
+fun CountDownTimer(deadlineMillis: Long){
+    var timeLeftMillis by remember { mutableStateOf(deadlineMillis - System.currentTimeMillis()) }
+
+    LaunchedEffect (key1 = deadlineMillis) {
+        while (timeLeftMillis > 0){
+            delay(1000L)
+            timeLeftMillis = deadlineMillis - System.currentTimeMillis()
+        }
+    }
+
+    val days = TimeUnit.MILLISECONDS.toDays(timeLeftMillis)
+    val hours = TimeUnit.MILLISECONDS.toHours(timeLeftMillis) % 24
+    val minutes = TimeUnit.MILLISECONDS.toMinutes(timeLeftMillis) % 60
+    val seconds = TimeUnit.MILLISECONDS.toSeconds(timeLeftMillis) % 60
+
+    Text(
+        text = when {
+            days > 0 -> "La tarea vence en $days dias, $hours h"
+            hours > 0 -> "La tarea vence en $hours h, $minutes min"
+            minutes > 0 -> "La tarea vence en $minutes min, $seconds s"
+            seconds > 0 -> "La tarea vence en $seconds s"
+            else -> "¡La tarea ha vencido!"
+        }
+    )
 }

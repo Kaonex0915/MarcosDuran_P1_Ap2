@@ -13,5 +13,5 @@ class TareaRepository @Inject constructor(
 
     suspend fun delete(tarea: TareaEntity) = tareaDao.delete(tarea)
 
-    fun getTarea() = tareaDao.getAll()
+    fun getTareas() = tareaDao.getAll()
 }
