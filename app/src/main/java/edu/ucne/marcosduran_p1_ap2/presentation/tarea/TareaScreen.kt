@@ -48,6 +48,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 @Composable
 fun TareaScreen(
@@ -57,6 +58,12 @@ fun TareaScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    if(uiState.guardadoConExito){
+        if(uiState.guardadoConExito == true){
+            viewModel.onNavigationDone()
+            goBack()
+        }
+    }
 
     LaunchedEffect (tareaId) {
         if (tareaId > 0) {
@@ -153,7 +160,6 @@ fun TareaBodyScreen(
                 Button (
                     onClick = {
                         onEvent(TareaEvent.Save)
-                        goBack()
                     },
                     modifier = Modifier.weight(1f)
                 ) {
@@ -188,6 +194,7 @@ fun DateTimePicker(
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
+    val timeZoneRD = TimeZone.getTimeZone("America/Santo_Domingo")
 
     val validSelectedDate = if (selectedDate < System.currentTimeMillis()) {
         System.currentTimeMillis()
@@ -195,11 +202,15 @@ fun DateTimePicker(
         selectedDate
     }
 
+    val calendar = remember(validSelectedDate) {
+        Calendar.getInstance(timeZoneRD).apply { timeInMillis = validSelectedDate }
+    }
+
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = validSelectedDate,
         selectableDates = object : SelectableDates {
             override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-                val today = Calendar.getInstance().apply {
+                val today = Calendar.getInstance(timeZoneRD).apply {
                     set(Calendar.HOUR_OF_DAY, 0)
                     set(Calendar.MINUTE, 0)
                     set(Calendar.SECOND, 0)
@@ -211,15 +222,18 @@ fun DateTimePicker(
     )
 
     val timePickerState = rememberTimePickerState(
-        initialHour = Calendar.getInstance().apply { timeInMillis = validSelectedDate }.get(Calendar.HOUR_OF_DAY),
-        initialMinute = Calendar.getInstance().apply { timeInMillis = validSelectedDate }.get(Calendar.MINUTE)
+        initialHour = calendar.get(Calendar.HOUR_OF_DAY),
+        initialMinute = calendar.get(Calendar.MINUTE)
     )
 
-    val dateTimeFormatter = SimpleDateFormat("dd/mm/yyyy 'a las' HH:mm", Locale.getDefault())
+    val dateTimeFormatter = SimpleDateFormat("dd/MM/yyyy 'a las' HH:mm", Locale.getDefault()).apply {
+        timeZone = timeZoneRD
+    }
+
     val selectedDateTimeText = dateTimeFormatter.format(Date(validSelectedDate))
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        OutlinedButton (
+        OutlinedButton(
             onClick = { showDatePicker = true },
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -263,14 +277,14 @@ fun DateTimePicker(
         }
 
         if (showDatePicker) {
-            DatePickerDialog (
+            DatePickerDialog(
                 onDismissRequest = { showDatePicker = false },
                 confirmButton = {
-                    TextButton (
+                    TextButton(
                         onClick = {
                             datePickerState.selectedDateMillis?.let { millis ->
-                                val currentCalendar = Calendar.getInstance().apply { timeInMillis = validSelectedDate }
-                                val newCalendar = Calendar.getInstance().apply {
+                                val currentCalendar = Calendar.getInstance(timeZoneRD).apply { timeInMillis = validSelectedDate }
+                                val newCalendar = Calendar.getInstance(timeZoneRD).apply {
                                     timeInMillis = millis
                                     set(Calendar.HOUR_OF_DAY, currentCalendar.get(Calendar.HOUR_OF_DAY))
                                     set(Calendar.MINUTE, currentCalendar.get(Calendar.MINUTE))
@@ -301,7 +315,7 @@ fun DateTimePicker(
                 confirmButton = {
                     TextButton(
                         onClick = {
-                            val calendar = Calendar.getInstance().apply {
+                            val calendar = Calendar.getInstance(timeZoneRD).apply {
                                 timeInMillis = validSelectedDate
                                 set(Calendar.HOUR_OF_DAY, timePickerState.hour)
                                 set(Calendar.MINUTE, timePickerState.minute)

@@ -6,5 +6,7 @@ data class TareaUiState(
     val descripcion: String? = "",
     val tiempo: Long? = null,
     val errorMessage: String? = null,
-    val tareas: List<TareaEntity> = emptyList()
+    val tareas: List<TareaEntity> = emptyList(),
+    val guardadoConExito: Boolean = false
+
 )

@@ -47,6 +47,7 @@ class TareaViewModel @Inject constructor(
 
                 _uiState.update {
                     it.copy(errorMessage = null)
+                    it.copy(guardadoConExito = true)
                 }
             }catch (e: Exception){
                 _uiState.update {
@@ -132,6 +133,12 @@ class TareaViewModel @Inject constructor(
     private fun onTareaIdChange(tareaId: Int) {
         _uiState.update {
             it.copy(tareaId = tareaId)
+        }
+    }
+
+    fun onNavigationDone(){
+        _uiState.update {
+            it.copy(guardadoConExito = false)
         }
     }
 
